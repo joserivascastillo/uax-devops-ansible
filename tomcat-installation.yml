@@ -3,7 +3,7 @@
   hosts: tomcat_nodes
   become: yes
   vars:
-    tomcat_ver: 10.1.39
+    tomcat_ver: 10.1.55
     ui_manager_username: manager
     ui_manager_pass: manager
     ui_admin_username: admin
