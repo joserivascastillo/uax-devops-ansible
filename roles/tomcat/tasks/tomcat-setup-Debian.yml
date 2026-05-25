@@ -62,21 +62,20 @@
   template:
     src: templates/tomcat.service.j2
     dest: /etc/systemd/system/tomcat.service
-#  when: ansible_service_mgr == "systemd"
   when: ansible_facts['service_mgr'] == "systemd"
+
 - name: Start and enable tomcat
   service:
     daemon_reload: yes
     name: tomcat
     state: started
     enabled: yes
-#  when: ansible_service_mgr == "systemd"
   when: ansible_facts['service_mgr'] == "systemd"
+
 - name: Set UI access credentials
   template:
     src: tomcat-users.xml.j2
     dest: "{{ tomcat_install_path }}/conf/tomcat-users.xml"
-#  notify: restart tomcat
 
 - name: Allow access to Manager and Host Manager apps from any IP
   template:
@@ -93,15 +92,11 @@
       get_url:
         url: "{{ war_from_artifactory_url }}"
         dest: "{{ tomcat_webapps_path }}/{{ app_name }}.war"
-        url_username: "{{ artifactory_user }}"      # Nueva variable
-        url_password: "{{ artifactory_password }}"  # Nueva variable
+        url_username: "{{ artifactory_user }}"
+        url_password: "{{ artifactory_password }}"
         owner: tomcat
         group: tomcat
         mode: '0644'
-      notify: restart_tomcat
-
-  # Esta es la condición clave que pediste
   when:
     - deploy_artifact | bool
     - war_from_artifactory_url != ""
-  notify: restart_tomcat
